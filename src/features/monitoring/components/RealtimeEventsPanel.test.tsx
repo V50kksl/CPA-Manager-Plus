@@ -117,7 +117,7 @@ const baseRow = (overrides: Partial<PanelRow> = {}): PanelRow => ({
   dayKey: '2026-04-25',
   hourLabel: '00:00',
   model: 'client-gpt',
-  resolvedModel: 'gpt-5.4',
+  resolvedModel: 'gpt-5.6-terra',
   endpoint: 'POST /v1/chat/completions',
   endpointMethod: 'POST',
   endpointPath: '/v1/chat/completions',
@@ -232,7 +232,7 @@ describe('RealtimeEventsPanel', () => {
     expect(markup).toContain('Speed: Fast');
     expect(markup).not.toContain('priority');
     expect(markup).toContain('client-gpt');
-    expect(markup).toContain('gpt-5.4');
+    expect(markup).toContain('gpt-5.6-terra');
     expect(markup).not.toContain('Resolved');
     expect(markup).toContain('POST /v1/chat/completions');
     expect(markup).toContain('Failed');
@@ -256,6 +256,18 @@ describe('RealtimeEventsPanel', () => {
     expect(markup).toContain('aria-label="Copy"');
     expect(markup).toContain('HTTP 429');
     expect(markup).toContain('rate limit exceeded');
+  });
+
+  it('renders a compaction stage next to the endpoint', () => {
+    const markup = renderPanel(
+      baseRow({
+        endpoint: 'POST /v1/responses (官方-->摘要)',
+        endpointMethod: 'POST',
+        endpointPath: '/v1/responses',
+      })
+    );
+
+    expect(markup).toContain('POST /v1/responses (官方--&gt;摘要)');
   });
 
   it('shows the requested-to-effective speed transition when tiers differ', () => {

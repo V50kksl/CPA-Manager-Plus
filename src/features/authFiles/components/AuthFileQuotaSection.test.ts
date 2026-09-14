@@ -125,6 +125,13 @@ describe('selectEffectiveQuota', () => {
 
     expect(selectEffectiveQuota(headers, startup)).toBe(headers);
   });
+
+  it('不会用旧的持久化快照覆盖刚刚刷新的额度', () => {
+    const refreshed = { status: 'success', fetchedAtMs: 3000 };
+    const persisted = { status: 'success', fetchedAtMs: 2000 };
+
+    expect(selectEffectiveQuota(refreshed, persisted)).toBe(refreshed);
+  });
 });
 
 describe('preserveCodexPlanType', () => {

@@ -43,7 +43,10 @@ import {
 } from '@/features/authFiles/constants';
 import { AuthFileCard } from '@/features/authFiles/components/AuthFileCard';
 import { AuthFileTable } from '@/features/authFiles/components/AuthFileTable';
-import { buildEmbeddedCodexQuota } from '@/features/authFiles/components/AuthFileQuotaSection';
+import {
+  buildEmbeddedCodexQuota,
+  selectEffectiveQuota,
+} from '@/features/authFiles/components/AuthFileQuotaSection';
 import { AuthJsonPasteModal } from '@/features/authFiles/components/AuthJsonPasteModal';
 import { AuthFileModelsModal } from '@/features/authFiles/components/AuthFileModelsModal';
 import { AuthFilesPrefixProxyEditorModal } from '@/features/authFiles/components/AuthFilesPrefixProxyEditorModal';
@@ -451,6 +454,16 @@ export function AuthFilesPage() {
   useHeaderRefresh(handleHeaderRefresh);
 
   useEffect(() => {
+    if (!isCurrentLayer || typeof window === 'undefined') return;
+
+    const handleAuthFilesRefresh = () => {
+      void loadFiles().catch(() => {});
+    };
+    window.addEventListener('auth-files-refresh', handleAuthFilesRefresh);
+    return () => window.removeEventListener('auth-files-refresh', handleAuthFilesRefresh);
+  }, [isCurrentLayer, loadFiles]);
+
+  useEffect(() => {
     if (!isCurrentLayer) return;
     loadFiles();
     loadExcluded();
@@ -471,13 +484,9 @@ export function AuthFilesPage() {
       for (const file of files) {
         if (resolveAuthProvider(file) !== 'codex' || isRuntimeOnlyAuthFile(file)) continue;
         const persistedQuota = buildEmbeddedCodexQuota(file, t);
-        if (persistedQuota) {
-          sqliteQuota[file.name] = persistedQuota;
-          continue;
-        }
-        const transient = current[file.name];
-        if (transient?.status === 'loading' || transient?.status === 'error') {
-          sqliteQuota[file.name] = transient;
+        const effectiveQuota = selectEffectiveQuota(current[file.name], persistedQuota);
+        if (effectiveQuota) {
+          sqliteQuota[file.name] = effectiveQuota;
         }
       }
       return sqliteQuota;

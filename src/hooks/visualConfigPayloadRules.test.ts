@@ -10,7 +10,7 @@ describe('visual config payload rules', () => {
       {
         models: [
           {
-            name: 'gpt-5.4',
+            name: 'gpt-5.6-terra',
             protocol: 'openai',
             'from-protocol': 'responses',
             headers: {
@@ -33,7 +33,7 @@ describe('visual config payload rules', () => {
     const model = serialized[0].models as Array<Record<string, unknown>>;
 
     expect(model[0]).toMatchObject({
-      name: 'gpt-5.4',
+      name: 'gpt-5.6-terra',
       protocol: 'openai',
       'from-protocol': 'responses',
       headers: {

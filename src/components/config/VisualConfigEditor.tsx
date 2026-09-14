@@ -1345,7 +1345,7 @@ export function VisualConfigEditor({
               <SectionGrid>
                 <Input
                   label={t('config_management.visual.sections.augment.code_completion_model')}
-                  placeholder="gpt-5.4-mini"
+                  placeholder="gpt-5.6-luna"
                   value={values.augmentCodeCompletionModel}
                   onChange={(e) => onChange({ augmentCodeCompletionModel: e.target.value })}
                   disabled={disabled || !values.augmentUseConfiguredCompletionModels}

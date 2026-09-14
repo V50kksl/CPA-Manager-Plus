@@ -850,6 +850,7 @@ export function RealtimeEventsPanel({
     const endpoint = [row.endpointMethod, row.endpointPath || row.endpoint]
       .filter(Boolean)
       .join(' ');
+    const endpointDisplay = row.endpoint && row.endpoint !== endpoint ? row.endpoint : endpoint;
 
     switch (key) {
       case 'source':
@@ -883,10 +884,7 @@ export function RealtimeEventsPanel({
       case 'endpoint':
         return (
           <div className={styles.primaryCell}>
-            <span className={styles.monoCell}>{endpoint || row.endpoint || '-'}</span>
-            {row.endpoint && row.endpoint !== endpoint ? (
-              <small className={styles.monoCell}>{row.endpoint}</small>
-            ) : null}
+            <span className={styles.monoCell}>{endpointDisplay || '-'}</span>
           </div>
         );
       case 'clientIp':

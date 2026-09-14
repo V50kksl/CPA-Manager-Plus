@@ -115,7 +115,7 @@ describe('native usage monitoring analytics fallback', () => {
         apis: {
           'andyhome-sk': {
             models: {
-              'gpt-5.4': {
+              'gpt-5.6-terra': {
                 details: [
                   {
                     timestamp,

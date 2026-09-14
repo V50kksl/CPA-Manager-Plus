@@ -224,9 +224,6 @@ export function getServiceTierMultiplier(modelName: string, serviceTier?: string
   // be represented per tier, such as standard, priority, flex, and batch.
   if (isModelFamily(normalizedModel, 'gpt-5.5')) return 2.5;
   if (isModelFamily(normalizedModel, 'gpt-5.6')) return 2;
-  if (isModelFamily(normalizedModel, 'gpt-5.4-mini')) return 2;
-  if (isModelFamily(normalizedModel, 'gpt-5.4')) return 2;
-  if (isModelFamily(normalizedModel, 'gpt-5.3-codex')) return 2;
   return 1;
 }
 

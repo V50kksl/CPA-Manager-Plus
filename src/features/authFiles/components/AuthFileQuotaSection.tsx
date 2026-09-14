@@ -196,7 +196,12 @@ const isKiroQuotaWithoutDetails = (quota: unknown): quota is KiroQuotaState => {
   );
 };
 
-export const selectEffectiveQuota = (quota: QuotaState, embeddedQuota: QuotaState): QuotaState => {
+type DefinedQuotaState = Exclude<QuotaState, undefined>;
+
+export const selectEffectiveQuota = <
+  T extends DefinedQuotaState,
+  U extends DefinedQuotaState
+>(quota: T | undefined, embeddedQuota: U | undefined): T | U | undefined => {
   if (!quota) return embeddedQuota;
   if (!embeddedQuota || quota.status !== 'success' || embeddedQuota.status !== 'success') {
     return quota;

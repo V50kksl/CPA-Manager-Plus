@@ -248,7 +248,7 @@ describe('usage detail collection', () => {
       apis: {
         'POST /v1/chat/completions': {
           models: {
-            'gpt-5.4': {
+            'gpt-5.6-terra': {
               details: [
                 {
                   timestamp: '2026-05-19T10:00:00Z',
@@ -266,7 +266,7 @@ describe('usage detail collection', () => {
     };
 
     const detail = collectUsageDetails(usageData)[0];
-    expect(detail.__modelName).toBe('gpt-5.4');
+    expect(detail.__modelName).toBe('gpt-5.6-terra');
     expect(detail.__resolvedModel).toBe('gpt-5.5');
     expect(collectUsageDetailsWithEndpoint(usageData)[0].__resolvedModel).toBe('gpt-5.5');
   });
@@ -277,7 +277,7 @@ describe('usage detail collection', () => {
         apis: {
           'POST /v1/chat/completions': {
             models: {
-              'gpt-5.4': {
+              'gpt-5.6-terra': {
                 details: [
                   {
                     timestamp: '2026-05-19T10:00:00Z',
@@ -296,7 +296,7 @@ describe('usage detail collection', () => {
     };
 
     const detail = collectUsageDetailsWithEndpoint(usageData)[0];
-    expect(detail.__modelName).toBe('gpt-5.4');
+    expect(detail.__modelName).toBe('gpt-5.6-terra');
     expect(detail.__endpoint).toBe('POST /v1/chat/completions');
   });
 
@@ -305,7 +305,7 @@ describe('usage detail collection', () => {
       apis: {
         'POST /v1/chat/completions': {
           models: {
-            'gpt-5.4': {
+            'gpt-5.6-terra': {
               details: [
                 {
                   timestamp: '2026-05-19T10:00:00Z',
@@ -332,7 +332,7 @@ describe('usage detail collection', () => {
       apis: {
         'POST /v1/chat/completions': {
           models: {
-            'gpt-5.4': {
+            'gpt-5.6-terra': {
               details: [
                 {
                   timestamp: '2026-05-19T10:00:00Z',
@@ -392,7 +392,7 @@ describe('usage detail collection', () => {
       apis: {
         'POST /v1/responses': {
           models: {
-            'gpt-5.4': {
+            'gpt-5.6-terra': {
               details: [
                 {
                   timestamp: '2026-05-19T10:00:00Z',
@@ -536,14 +536,14 @@ describe('sensitive text masking', () => {
 describe('calculateCost model price preference', () => {
   const prices = {
     'gpt-5.5': { prompt: 5, completion: 10, cache: 1 },
-    'gpt-5.4': { prompt: 50, completion: 100, cache: 10 },
+    'test-model': { prompt: 50, completion: 100, cache: 10 },
   };
 
   it('prefers resolved upstream model when present', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'test-model',
         __resolvedModel: 'gpt-5.5',
       },
       prices
@@ -555,7 +555,7 @@ describe('calculateCost model price preference', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'test-model',
       },
       prices
     );
@@ -566,7 +566,7 @@ describe('calculateCost model price preference', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'test-model',
         __resolvedModel: 'unknown-upstream',
       },
       prices
@@ -578,7 +578,7 @@ describe('calculateCost model price preference', () => {
 		const cost = calculateCost(
 			{
 				tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-				__modelName: 'gpt-5.4',
+				__modelName: 'test-model',
 				response_model: 'gpt-5.5',
 			},
 			prices
@@ -586,25 +586,25 @@ describe('calculateCost model price preference', () => {
 		expect(cost).toBeCloseTo(5);
 	});
 
-  it('applies the tier multiplier to the requested price fallback', () => {
+  it('does not infer a tier multiplier for the requested price fallback', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'test-model',
         __resolvedModel: 'unknown-upstream',
         service_tier: 'priority',
       },
       prices
     );
 
-    expect(cost).toBeCloseTo(100);
+    expect(cost).toBeCloseTo(50);
   });
 
   it('prefers the upstream response tier for billing', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000, output_tokens: 0 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'test-model',
         service_tier: 'priority',
         response_service_tier: 'default',
       },
@@ -804,19 +804,19 @@ describe('calculateCost model price preference', () => {
     expect(cost).toBeCloseTo(2.4);
   });
 
-  it('applies gpt-5.4 priority service tier multiplier', () => {
+  it('applies gpt-5.6-terra priority service tier multiplier', () => {
     const cost = calculateCost(
       {
         tokens: { input_tokens: 1_000_000 },
-        __modelName: 'gpt-5.4',
+        __modelName: 'gpt-5.6-terra',
         service_tier: 'priority',
       },
       {
-        'gpt-5.4': { prompt: 2.5, completion: 5, cache: 1 },
+        'gpt-5.6-terra': { prompt: 2.5, completion: 5, cache: 1 },
       }
     );
 
-    expect(cost).toBeCloseTo(5);
+    expect(cost).toBeCloseTo(10);
   });
 
   it('applies gpt-5.5 priority service tier multiplier', () => {
@@ -836,28 +836,28 @@ describe('calculateCost model price preference', () => {
 
   it('keeps default and missing service tier at standard cost', () => {
     const modelPrices = {
-      'gpt-5.4': { prompt: 2.5, completion: 5, cache: 1 },
+      'gpt-5.6-terra': { prompt: 2.5, completion: 5, cache: 1 },
     };
 
     expect(
       calculateCost(
         {
           tokens: { input_tokens: 1_000_000 },
-          __modelName: 'gpt-5.4',
+          __modelName: 'gpt-5.6-terra',
           service_tier: 'default',
         },
         modelPrices
       )
-    ).toBeCloseTo(2.5);
+    ).toBeCloseTo(5);
     expect(
       calculateCost(
         {
           tokens: { input_tokens: 1_000_000 },
-          __modelName: 'gpt-5.4',
+          __modelName: 'gpt-5.6-terra',
         },
         modelPrices
       )
-    ).toBeCloseTo(2.5);
+    ).toBeCloseTo(5);
   });
 
   it('does not guess priority multiplier for unknown models', () => {
@@ -878,16 +878,16 @@ describe('calculateCost model price preference', () => {
 
 describe('getServiceTierMultiplier', () => {
   it('matches backend priority tier rules', () => {
-    expect(getServiceTierMultiplier('gpt-5.4', 'default')).toBe(1);
-    expect(getServiceTierMultiplier('gpt-5.4', 'priority')).toBe(2);
-    expect(getServiceTierMultiplier('gpt-5.4', 'fast')).toBe(2);
-    expect(getServiceTierMultiplier('gpt-5.4-mini', 'priority')).toBe(2);
+    expect(getServiceTierMultiplier('gpt-5.6-terra', 'default')).toBe(1);
+    expect(getServiceTierMultiplier('gpt-5.6-terra', 'priority')).toBe(2);
+    expect(getServiceTierMultiplier('gpt-5.6-terra', 'fast')).toBe(2);
+    expect(getServiceTierMultiplier('gpt-5.6-luna', 'priority')).toBe(2);
     expect(getServiceTierMultiplier('gpt-5.5', 'priority')).toBe(2.5);
     expect(getServiceTierMultiplier('gpt-5.6-sol', 'priority')).toBe(2);
     expect(getServiceTierMultiplier('gpt-5.6-sol', 'flex')).toBe(0.5);
     expect(getServiceTierMultiplier('gpt-5.6-sol', 'ultrafast')).toBe(2);
-    expect(getServiceTierMultiplier('gpt-5.3-codex', 'priority')).toBe(2);
-    expect(getServiceTierMultiplier('gpt-5.4', 'unknown')).toBe(1);
+    expect(getServiceTierMultiplier('gpt-5.6-sol', 'priority')).toBe(2);
+    expect(getServiceTierMultiplier('gpt-5.6-terra', 'unknown')).toBe(1);
     expect(getServiceTierMultiplier('unknown-model', 'priority')).toBe(1);
     expect(getServiceTierMultiplier('unknown-model', 'ultrafast')).toBe(2);
   });

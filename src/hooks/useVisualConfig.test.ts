@@ -216,7 +216,7 @@ describe('useVisualConfig', () => {
     const harness = mountUseVisualConfig();
     const yaml = [
       'augment:',
-      '  code-completion-model: gpt-5.4-mini',
+      '  code-completion-model: gpt-5.6-luna',
       '  chat-input-completion-model: claude-haiku-4-5',
       '',
     ].join('\n');
@@ -227,7 +227,7 @@ describe('useVisualConfig', () => {
     });
 
     expect(harness.getCurrent().visualValues.augmentUseConfiguredCompletionModels).toBe(false);
-    expect(harness.getCurrent().visualValues.augmentCodeCompletionModel).toBe('gpt-5.4-mini');
+    expect(harness.getCurrent().visualValues.augmentCodeCompletionModel).toBe('gpt-5.6-luna');
     expect(harness.getCurrent().visualValues.augmentChatInputCompletionModel).toBe(
       'claude-haiku-4-5'
     );
@@ -397,7 +397,7 @@ describe('useVisualConfig', () => {
       '  image-fallback-model: qwen3.5-plus',
       '  codebase-retrieval-model: claude-sonnet-4-5',
       '  use-configured-completion-models: true',
-      '  code-completion-model: gpt-5.4-mini',
+      '  code-completion-model: gpt-5.6-luna',
       '  chat-input-completion-model: claude-haiku-4-5',
       'kiro-request-policy:',
       '  per-account-rpm-limit: 20',
@@ -423,7 +423,7 @@ describe('useVisualConfig', () => {
       'claude-sonnet-4-5'
     );
     expect(harness.getCurrent().visualValues.augmentUseConfiguredCompletionModels).toBe(true);
-    expect(harness.getCurrent().visualValues.augmentCodeCompletionModel).toBe('gpt-5.4-mini');
+    expect(harness.getCurrent().visualValues.augmentCodeCompletionModel).toBe('gpt-5.6-luna');
     expect(harness.getCurrent().visualValues.augmentChatInputCompletionModel).toBe(
       'claude-haiku-4-5'
     );
@@ -434,7 +434,7 @@ describe('useVisualConfig', () => {
         augmentCodebaseRetrievalModel: 'gpt-5.5',
         augmentUseConfiguredCompletionModels: false,
         augmentCodeCompletionModel: 'gpt-5.6-luna',
-        augmentChatInputCompletionModel: 'gpt-5.4-mini',
+        augmentChatInputCompletionModel: 'gpt-5.6-luna',
         augmentShowThinkingProgress: true,
         kiroCooldownStrategy: 'exponential',
       });
@@ -444,7 +444,7 @@ describe('useVisualConfig', () => {
     expect(savedYaml).toContain('codebase-retrieval-model: gpt-5.5');
     expect(savedYaml).toContain('use-configured-completion-models: false');
     expect(savedYaml).toContain('code-completion-model: gpt-5.6-luna');
-    expect(savedYaml).toContain('chat-input-completion-model: gpt-5.4-mini');
+    expect(savedYaml).toContain('chat-input-completion-model: gpt-5.6-luna');
     expect(savedYaml).toContain('show-thinking-progress: true');
     expect(savedYaml).not.toContain('image-fallback-model: qwen3.5-plus');
     expect(savedYaml).toContain('cooldown-strategy: exponential');
